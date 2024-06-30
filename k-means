@@ -1,0 +1,76 @@
+"""
+作った人:22C3057 下川
+データ入力はエクセルからの直接コピーで大丈夫です
+"""
+import random
+import numpy as np
+def setup():
+    data=[]
+    range_data=[]
+    dimensions=int(input("何次元のデータを扱いますか : "))
+    for i in range(dimensions):
+        print(f'About the {i+1} dimension')
+        data_min,data_max=map(int,input('データの最小値と最大値を入力してください(min max) : ').split())
+        range_data.append([data_min,data_max])
+    while True:
+        input_data=input('データを入力してください : ')
+        if len(list(input_data.split()))==dimensions:
+            data.append(np.array(list(map(int,input_data.split()))))
+        else:
+            return range_data,data,dimensions
+
+def means(range_data,data,N,cheak):
+    if cheak==1:
+        N=int(input('クラスタ数 : '))
+    count=0
+    while True:
+        """
+        要素を持たないクラスタが発生しなくなるまで繰り返し乱数調整する
+        """
+        m=0
+        cluster=[[random.randint(range_data[i][0],range_data[i][1]) for i in range(len(range_data))] for _ in range(N)]
+        cluster.sort()
+        aff_cluster=[[] for _ in range(N)]
+        for i in range(len(data)):
+            dist=[np.linalg.norm(cluster[m]-data[i])for m in range(len(cluster))]
+            aff_cluster[dist.index(min(dist))].append(data[i])
+        for i in range(len(aff_cluster)):
+            if len(aff_cluster[i])!=0:
+                cluster[i]=sum(aff_cluster[i])/len(aff_cluster[i])
+                m+=1
+        if m==len(aff_cluster):
+            break
+        count+=1
+    #データのクラスタを決定
+    for n in range(10):
+        aff_cluster=[[] for _ in range(N)]
+        for i in range(len(data)):
+            dist=[np.linalg.norm(cluster[m]-data[i])for m in range(len(cluster))]
+            aff_cluster[dist.index(min(dist))].append(data[i])
+        
+        #重心を求め、移動
+        for i in range(len(aff_cluster)):
+            if len(aff_cluster[i])!=0:
+                cluster[i]=sum(aff_cluster[i])/len(aff_cluster[i])
+    print(f'クラスタ数 : {N}')
+    print(f'試行回数 : {count}')    
+    print(f'中心座標 : {cluster}')
+    for m in range(len(aff_cluster)):
+        print('*'*10+f'クラスタ{m+1}'+'*'*10)
+        for n in range(len(aff_cluster[m])):
+            print(aff_cluster[m][n])
+        print()
+        
+if __name__==__name__:
+    range_data,data,dimensions=setup()
+    cluster=0
+    while True:
+        fix = input('クラスタ数を固定しますか(yes or no) : ')
+        if fix=='yes':
+            cluster=1
+        elif fix=='no':
+            cluster=int(input('何個のクラスタまで行いますか : '))
+        for i in range(cluster):
+            means(range_data,data,i+1,cluster)
+        if input('もう一度行いますか(yes or no) : ')=='no':
+            break
