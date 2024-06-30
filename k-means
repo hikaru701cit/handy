@@ -1,5 +1,6 @@
 """
 データ入力はエクセルからの直接コピーで大丈夫です
+作成者：22c3057 下川
 """
 import random
 import numpy as np
