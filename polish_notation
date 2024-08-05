@@ -1,0 +1,39 @@
+print('nodes', nodes)
+print('edges', edges)
+print('labels', labels)
+m=[[]for i in range(len(nodes)-1)]
+last=[labels[0]]
+for i in range(len(edges)):
+  m[edges[i][0]].append(edges[i][1])
+for i in range(len(edges)-1,0,-1):#リストの最後尾から
+  if m[i]:#もし中身があったら
+    if len(m[i])==1:
+      m[i][0]=str(labels[m[i][0]])
+    for n in range(len(edges)-1,-1,-1):#走査するリストの長さ
+      for k in range(len(m[n])-1,-1,-1):#リスト内の走査
+      #m[5]→[8,9]
+      #m[3]→[5,9,[8,9]] *下のappendはInsertは使えなかったため強引にした　上のforは今回でいう5を見つけるため
+        if m[n][k]==i:
+          for o in range(len(m[n])-1,k-1,-1):
+            if type(m[n][o])==int:
+              m[n][o]=str(labels[m[n][o]])
+          tmp=len(m[n])
+          if all(isinstance(x,int) for x in m[i]):
+            for l in range(len(m[i])):
+              m[i][l]=str(labels[m[i][l]])
+          if type(m[i][0])==int:
+            m[i][0]=str(labels[m[i][0]])
+          m[n].append(m[i])#リスト番号のリストに追加
+          if len(m[n])==4:
+            m[n][1],m[n][2],m[n][3]=m[n][3],m[n][1],m[n][2]#4個だった場合リストの並び替え
+            #[1,2,[3,4]]
+            #[1,[3,4],2]
+            #[1,[3,4],2,[5,6]]
+          elif len(m[n])==3 and k==0 and tmp==2:#木の右が終端かつ左側には要素がある場合といった例外用
+            m[n][1],m[n][2]=m[n][2],m[n][1]
+'''
+for i in range(len(m)-1,0,-1):
+  print(m[i])
+'''
+last.append(m[0])
+print("今回の計算式\n",last)
